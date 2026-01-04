@@ -1,0 +1,143 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "MonoGameLibrary/1.0.0": {
+        "dependencies": {
+          "Gum.MonoGame": "2025.12.9.1",
+          "MonoGame.Extended": "5.0.1",
+          "MonoGame.Framework.Native": "3.8.4.1"
+        },
+        "runtime": {
+          "MonoGameLibrary.dll": {}
+        }
+      },
+      "FlatRedBall.GumCommon/2025.12.9.1": {
+        "dependencies": {
+          "FlatRedBall.InterpolationCore": "2025.4.22.1"
+        },
+        "runtime": {
+          "lib/net8.0/GumCommon.dll": {
+            "assemblyVersion": "2025.12.9.1",
+            "fileVersion": "2025.12.9.1"
+          }
+        }
+      },
+      "FlatRedBall.InterpolationCore/2025.4.22.1": {
+        "runtime": {
+          "lib/netstandard2.0/FlatRedBall.InterpolationCore.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
+          }
+        }
+      },
+      "Gum.MonoGame/2025.12.9.1": {
+        "dependencies": {
+          "FlatRedBall.GumCommon": "2025.12.9.1",
+          "TextCopy": "6.2.1"
+        },
+        "runtime": {
+          "lib/net8.0/MonoGameGum.dll": {
+            "assemblyVersion": "2025.12.9.1",
+            "fileVersion": "2025.12.9.1"
+          }
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions/7.0.0": {
+        "runtime": {
+          "lib/net7.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.22.51805"
+          }
+        }
+      },
+      "MonoGame.Extended/5.0.1": {
+        "runtime": {
+          "lib/net8.0/MonoGame.Extended.dll": {
+            "assemblyVersion": "5.0.1.0",
+            "fileVersion": "5.0.1.0"
+          }
+        }
+      },
+      "MonoGame.Framework.Native/3.8.4.1": {
+        "runtime": {
+          "lib/net8.0/MonoGame.Framework.dll": {
+            "assemblyVersion": "3.8.4.1",
+            "fileVersion": "3.8.4.1"
+          }
+        }
+      },
+      "TextCopy/6.2.1": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/TextCopy.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MonoGameLibrary/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "FlatRedBall.GumCommon/2025.12.9.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-YjCThKDm4G+uyNFP3iNzcjp+9w5H9ni/2U+3BuzVuGZzLFAHUzXrL6jiMkTlBLcbH7xyoR7thMLjYE6cs2bpgA==",
+      "path": "flatredball.gumcommon/2025.12.9.1",
+      "hashPath": "flatredball.gumcommon.2025.12.9.1.nupkg.sha512"
+    },
+    "FlatRedBall.InterpolationCore/2025.4.22.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-x95teSPBlV88KKbivY+peQ8AjqfXFgmGFnHw4Adds8UaO81zJKZAZZrXeetp5K+5mgd4t2hdtW4ItBFJ7ZwWig==",
+      "path": "flatredball.interpolationcore/2025.4.22.1",
+      "hashPath": "flatredball.interpolationcore.2025.4.22.1.nupkg.sha512"
+    },
+    "Gum.MonoGame/2025.12.9.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TvPx5UyRSFTIzDv/VNva+P7MLUB5ffesVymoWqjXUUbZ6IscPznaoWSKpWhVHEBF98rbmc5Xcx5PC2omkC8/qw==",
+      "path": "gum.monogame/2025.12.9.1",
+      "hashPath": "gum.monogame.2025.12.9.1.nupkg.sha512"
+    },
+    "Microsoft.Extensions.DependencyInjection.Abstractions/7.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-h3j/QfmFN4S0w4C2A6X7arXij/M/OVw3uQHSOFxnND4DyAzO1F9eMX7Eti7lU/OkSthEE0WzRsfT/Dmx86jzCw==",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/7.0.0",
+      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512"
+    },
+    "MonoGame.Extended/5.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Eqd1jWIGmVRcJmAW3zxRxZhFgYHeOK9XmMCl7YH/B4IrW1qmqdfqXqO6dqrT6ygf8Ii5x6lPqdP4vInXOrFOfQ==",
+      "path": "monogame.extended/5.0.1",
+      "hashPath": "monogame.extended.5.0.1.nupkg.sha512"
+    },
+    "MonoGame.Framework.Native/3.8.4.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QxB+eK5aUirsUN/wMhYZZnj2/vgHxsDQtVlRMVVWozgwmzJXsnPxzbRTrvN8+mQy1MfDHps4b/PYhKmCnjoLsQ==",
+      "path": "monogame.framework.native/3.8.4.1",
+      "hashPath": "monogame.framework.native.3.8.4.1.nupkg.sha512"
+    },
+    "TextCopy/6.2.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ryejViUBmHQ2XMie2AiRBn7KVKu2Gh/hqrctGSAUf1BufwfPjr+MWuACNBaiG+40TMbWRDJZgV73Tpl9hggeRw==",
+      "path": "textcopy/6.2.1",
+      "hashPath": "textcopy.6.2.1.nupkg.sha512"
+    }
+  }
+}
