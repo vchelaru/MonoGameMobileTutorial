@@ -1,15 +1,15 @@
 using System;
 using DungeonSlime.UI;
+using Gum.Forms.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.ViewportAdapters;
 using MonoGameGum;
-using Gum.Forms.Controls;
 using MonoGameGum.GueDeriving;
 using MonoGameLibrary;
 using MonoGameLibrary.Graphics;
 using MonoGameLibrary.Scenes;
-using MonoGame.Extended.ViewportAdapters;
 
 namespace DungeonSlime.Scenes;
 
@@ -311,31 +311,15 @@ public class TitleScene : Scene
         _backgroundOffset.X %= _backgroundPattern.Width;
         _backgroundOffset.Y %= _backgroundPattern.Height;
 
-        // Set cursor transform to account for viewport scaling AND offset from letterboxing
-        // This properly maps mouse coordinates considering viewport bounds and scaling
-        Matrix scaleMatrix = _viewport.GetScaleMatrix();
-        Viewport viewportBounds = _viewport.Viewport;
-        Matrix offsetMatrix = Matrix.CreateTranslation(-viewportBounds.X, -viewportBounds.Y, 0);
-        Matrix combinedMatrix = offsetMatrix * scaleMatrix;
-
-        // Detailed debug output for coordinate mapping
-        Vector2 rawMouse = new Vector2(Core.Input.Mouse.X, Core.Input.Mouse.Y);
-        Vector2 gumCursor = new Vector2(GumService.Default.Cursor.X, GumService.Default.Cursor.Y);
-        Vector2 buttonPos = new Vector2(_startButton.Visual.AbsoluteX, _startButton.Visual.AbsoluteY);
-        Vector2 buttonSize = new Vector2(_startButton.Visual.Width, _startButton.Visual.Height);
-
-        // Test if mouse should be hitting button
-        /*Rectangle buttonBounds = new Rectangle((int)buttonPos.X, (int)buttonPos.Y, (int)buttonSize.X, (int)buttonSize.Y);
-        if (buttonBounds.Contains(gumCursor))
-        {
-            Debug.WriteLine("*** GUM CURSOR IS INSIDE BUTTON BOUNDS ***");
-        }*/
-        
-        GumService.Default.Cursor.TransformMatrix = Matrix.Invert(combinedMatrix);
-        GumService.Default.Update(gameTime);
-
         GumService.Default.Renderer.Camera.ClientWidth = _viewport.ViewportWidth / 4;
         GumService.Default.Renderer.Camera.ClientHeight = _viewport.ViewportHeight / 4;
+
+        float zoom = System.Math.Max(
+            _viewport.ViewportHeight / GumService.Default.CanvasHeight, 
+            _viewport.ViewportWidth / GumService.Default.CanvasWidth);
+        GumService.Default.Renderer.Camera.Zoom = zoom;
+
+        GumService.Default.Update(gameTime);
 
     }
 
@@ -376,7 +360,6 @@ public class TitleScene : Scene
             Core.SpriteBatch.End();
         }
 
-        GumService.Default.Renderer.SpriteRenderer.ForcedMatrix = _viewport.GetScaleMatrix();
         GumService.Default.Draw();
     }
 }

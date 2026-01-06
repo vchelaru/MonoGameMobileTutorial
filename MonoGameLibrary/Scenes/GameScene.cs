@@ -175,12 +175,15 @@ public class GameScene : Scene
 
     public override void Update(GameTime gameTime)
     {
-        // Ensure the UI is always updated with proper cursor transform including viewport offsets
-        var scaleMatrix = _viewport.GetScaleMatrix();
-        var viewportBounds = _viewport.Viewport;
-        var offsetMatrix = Matrix.CreateTranslation(-viewportBounds.X, -viewportBounds.Y, 0);
-        var combinedMatrix = offsetMatrix * scaleMatrix;
-        GumService.Default.Cursor.TransformMatrix = Matrix.Invert(combinedMatrix);
+        GumService.Default.Renderer.Camera.ClientWidth = _viewport.ViewportWidth / 4;
+        GumService.Default.Renderer.Camera.ClientHeight = _viewport.ViewportHeight / 4;
+
+        float zoom = System.Math.Max(
+            _viewport.ViewportHeight / GumService.Default.CanvasHeight,
+            _viewport.ViewportWidth / GumService.Default.CanvasWidth);
+        GumService.Default.Renderer.Camera.Zoom = zoom;
+
+
         _ui.Update(gameTime);
 
         if (_state != GameState.Playing)
@@ -431,7 +434,6 @@ public class GameScene : Scene
         Core.SpriteBatch.End();
 
         // Draw the UI
-        GumService.Default.Renderer.SpriteRenderer.ForcedMatrix = _viewport.GetScaleMatrix();
         _ui.Draw();
     }
 }
