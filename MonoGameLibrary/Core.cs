@@ -11,6 +11,9 @@ namespace MonoGameLibrary;
 
 public class Core : Game
 {
+    public const int BASE_BUFFER_WIDTH = 1280;
+    public const int BASE_BUFFER_HEIGHT = 720;
+
     internal static Core s_instance;
 
     /// <summary>
@@ -95,7 +98,7 @@ public class Core : Game
         // Set the window title
         Window.Title = title;
 
-        // Set the core's content manager to a reference of hte base Game's
+        // Set the core's content manager to a reference of the base Game's
         // content manager.
         Content = base.Content;
 
@@ -142,12 +145,13 @@ public class Core : Game
         // Update the audio controller.
         Audio.Update();
 
-#if !IOS
-        if (ExitOnEscape && Input.Keyboard.WasKeyJustPressed(Keys.Escape))
+        if (!OperatingSystem.IsIOS())
         {
-            Exit();
+            if (ExitOnEscape && Input.Keyboard.WasKeyJustPressed(Keys.Escape))
+            {
+                Exit();
+            }
         }
-#endif
         
         // if there is a next scene waiting to be switch to, then transition
         // to that scene

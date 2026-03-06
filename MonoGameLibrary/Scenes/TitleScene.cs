@@ -4,7 +4,6 @@ using Gum.Forms.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.ViewportAdapters;
 using MonoGameGum;
 using MonoGameGum.GueDeriving;
 using MonoGameLibrary;
@@ -101,9 +100,14 @@ public class TitleScene : Scene
 
         // Set the background pattern destination rectangle to fill the entire
         // screen background
-        _backgroundDestination = new Rectangle(0,0, 1280, 720); // Core.GraphicsDevice.PresentationParameters.Bounds;
+        _backgroundDestination = new Rectangle(0, 0, Core.BASE_BUFFER_WIDTH, Core.BASE_BUFFER_HEIGHT);
 
         InitializeUI();
+    }
+
+    public override void UnloadContent()
+    {
+        base.UnloadContent();
     }
 
     public override void LoadContent()
@@ -288,14 +292,11 @@ public class TitleScene : Scene
         GumService.Default.Root.Children.Clear();
 
         // this game was built for 1280x720 scaled up by 4.
-        GumService.Default.CanvasWidth = 1280 / 4f;
-        GumService.Default.CanvasHeight = 720 / 4f;
+        GumService.Default.CanvasWidth = Core.BASE_BUFFER_WIDTH / 4f;
+        GumService.Default.CanvasHeight = Core.BASE_BUFFER_HEIGHT / 4f;
 
         CreateTitlePanel();
         CreateOptionsPanel();
-
-        // the game will render at 1280x720.
-        _viewport = new(Core.GameWindow, Core.Graphics.GraphicsDevice, 1280, 720);
     }
 
     public override void Update(GameTime gameTime)
@@ -311,33 +312,43 @@ public class TitleScene : Scene
         _backgroundOffset.X %= _backgroundPattern.Width;
         _backgroundOffset.Y %= _backgroundPattern.Height;
 
-        GumService.Default.Renderer.Camera.ClientWidth = _viewport.ViewportWidth / 4;
-        GumService.Default.Renderer.Camera.ClientHeight = _viewport.ViewportHeight / 4;
-
-        float zoom = System.Math.Max(
-            _viewport.ViewportHeight / GumService.Default.CanvasHeight, 
-            _viewport.ViewportWidth / GumService.Default.CanvasWidth);
-        GumService.Default.Renderer.Camera.Zoom = zoom;
+        var b = Core.GameWindow.ClientBounds;
+        float scale = Math.Min(b.Width / (float)Core.BASE_BUFFER_WIDTH, b.Height / (float)Core.BASE_BUFFER_HEIGHT);
+        float offsetX = (b.Width - Core.BASE_BUFFER_WIDTH * scale) / 2f;
+        float offsetY = (b.Height - 720 * scale) / 2f;
+        float gumZoom = scale * 4f;
+        GumService.Default.Renderer.Camera.Zoom = gumZoom;
+        GumService.Default.Renderer.Camera.X = -offsetX / gumZoom;
+        GumService.Default.Renderer.Camera.Y = -offsetY / gumZoom;
 
         GumService.Default.Update(gameTime);
 
     }
 
-    BoxingViewportAdapter _viewport;
+    private Matrix GetScaleMatrix()
+    {
+        var b = Core.GameWindow.ClientBounds;
+        if (b.Width == 0 || b.Height == 0) return Matrix.Identity;
+        float scale = Math.Min(b.Width / (float)Core.BASE_BUFFER_WIDTH, b.Height / (float)Core.BASE_BUFFER_HEIGHT);
+        float ox = (b.Width  - 1280 * scale) / 2f;
+        float oy = (b.Height - Core.BASE_BUFFER_HEIGHT * scale) / 2f;
+        return Matrix.CreateScale(scale, scale, 1f) * Matrix.CreateTranslation(ox, oy, 0f);
+    }
+
 
     public override void Draw(GameTime gameTime)
     {
         Core.GraphicsDevice.Clear(new Color(32, 40, 78, 255));
 
         // Draw the background pattern first using the PointWrap sampler state.
-        Core.SpriteBatch.Begin(samplerState: SamplerState.PointWrap, transformMatrix: _viewport.GetScaleMatrix());
+        Core.SpriteBatch.Begin(samplerState: SamplerState.PointWrap, transformMatrix: GetScaleMatrix());
         Core.SpriteBatch.Draw(_backgroundPattern, _backgroundDestination, new Rectangle(_backgroundOffset.ToPoint(), _backgroundDestination.Size), Color.White * 0.5f);
         Core.SpriteBatch.End();
 
         if (_titleScreenButtonsPanel.IsVisible)
         {
             // Begin the sprite batch to prepare for rendering.
-            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: _viewport.GetScaleMatrix());
+            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: GetScaleMatrix());
 
             // The color to use for the drop shadow text.
             Color dropShadowColor = Color.Black * 0.5f;

@@ -3,7 +3,6 @@ using DungeonSlime.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.ViewportAdapters;
 using MonoGameGum;
 using MonoGameLibrary;
 using MonoGameLibrary.Graphics;
@@ -63,7 +62,7 @@ public class GameScene : Scene
 
         // Create the room bounds using the virtual viewport size (1280x720) instead of actual window size
         // This ensures characters stay within bounds regardless of window scaling/stretching
-        _roomBounds = new Rectangle(0, 0, 1280, 720);
+        _roomBounds = new Rectangle(0, 0, Core.BASE_BUFFER_WIDTH, Core.BASE_BUFFER_HEIGHT);
         _roomBounds.Inflate(-_tilemap.TileWidth, -_tilemap.TileHeight);
 
         // Subscribe to the slime's BodyCollision event so that a game over
@@ -74,8 +73,6 @@ public class GameScene : Scene
         // scenes
         GumService.Default.Root.Children.Clear();
 
-        _viewport = new(Core.GameWindow, Core.Graphics.GraphicsDevice, 1280, 720);
-
         // Initialize the user interface for the game scene.
         InitializeUI();
 
@@ -83,7 +80,21 @@ public class GameScene : Scene
         InitializeNewGame();
     }
 
-    BoxingViewportAdapter _viewport;
+    public override void UnloadContent()
+    {
+        base.UnloadContent();
+    }
+
+    private Matrix GetScaleMatrix()
+    {
+        var b = Core.GameWindow.ClientBounds;
+        if (b.Width == 0 || b.Height == 0) return Matrix.Identity;
+        float scale = Math.Min(b.Width / (float)Core.BASE_BUFFER_WIDTH, b.Height / (float)Core.BASE_BUFFER_HEIGHT);
+        float ox = (b.Width - Core.BASE_BUFFER_WIDTH * scale) / 2f;
+        float oy = (b.Height - Core.BASE_BUFFER_HEIGHT * scale) / 2f;
+        return Matrix.CreateScale(scale, scale, 1f) * Matrix.CreateTranslation(ox, oy, 0f);
+    }
+
 
     private void InitializeUI()
     {
@@ -175,13 +186,14 @@ public class GameScene : Scene
 
     public override void Update(GameTime gameTime)
     {
-        GumService.Default.Renderer.Camera.ClientWidth = _viewport.ViewportWidth / 4;
-        GumService.Default.Renderer.Camera.ClientHeight = _viewport.ViewportHeight / 4;
-
-        float zoom = System.Math.Max(
-            _viewport.ViewportHeight / GumService.Default.CanvasHeight,
-            _viewport.ViewportWidth / GumService.Default.CanvasWidth);
-        GumService.Default.Renderer.Camera.Zoom = zoom;
+        var b = Core.GameWindow.ClientBounds;
+        float scale = Math.Min(b.Width / (float)Core.BASE_BUFFER_WIDTH, b.Height / (float)Core.BASE_BUFFER_HEIGHT);
+        float offsetX = (b.Width - 1280 * scale) / 2f;
+        float offsetY = (b.Height - 720 * scale) / 2f;
+        float gumZoom = scale * 4f;
+        GumService.Default.Renderer.Camera.Zoom = gumZoom;
+        GumService.Default.Renderer.Camera.X = -offsetX / gumZoom;
+        GumService.Default.Renderer.Camera.Y = -offsetY / gumZoom;
 
 
         _ui.Update(gameTime);
@@ -413,12 +425,12 @@ public class GameScene : Scene
             _grayscaleEffect.Parameters["Saturation"].SetValue(_saturation);
 
             // And begin the sprite batch using the grayscale effect.
-            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: _grayscaleEffect, transformMatrix: _viewport.GetScaleMatrix());
+            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: _grayscaleEffect, transformMatrix: GetScaleMatrix());
         }
         else
         {
             // Otherwise, just begin the sprite batch as normal.
-            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: _viewport.GetScaleMatrix());
+            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: GetScaleMatrix());
         }
 
         // Draw the tilemap
