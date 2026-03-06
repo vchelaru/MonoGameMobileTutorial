@@ -60,7 +60,7 @@ public class GameScene : Scene
         // the escape key will be used to return back to the title screen
         Core.ExitOnEscape = false;
 
-        // Create the room bounds using the virtual viewport size (1280x720) instead of actual window size
+        // Create the room bounds using the virtual viewport size (Core.BASE_BUFFER_WIDTHxCore.BASE_BUFFER_HEIGHT) instead of actual window size
         // This ensures characters stay within bounds regardless of window scaling/stretching
         _roomBounds = new Rectangle(0, 0, Core.BASE_BUFFER_WIDTH, Core.BASE_BUFFER_HEIGHT);
         _roomBounds.Inflate(-_tilemap.TileWidth, -_tilemap.TileHeight);
@@ -188,8 +188,8 @@ public class GameScene : Scene
     {
         var b = Core.GameWindow.ClientBounds;
         float scale = Math.Min(b.Width / (float)Core.BASE_BUFFER_WIDTH, b.Height / (float)Core.BASE_BUFFER_HEIGHT);
-        float offsetX = (b.Width - 1280 * scale) / 2f;
-        float offsetY = (b.Height - 720 * scale) / 2f;
+        float offsetX = (b.Width - Core.BASE_BUFFER_WIDTH * scale) / 2f;
+        float offsetY = (b.Height - Core.BASE_BUFFER_HEIGHT * scale) / 2f;
         float gumZoom = scale * 4f;
         GumService.Default.Renderer.Camera.Zoom = gumZoom;
         GumService.Default.Renderer.Camera.X = -offsetX / gumZoom;

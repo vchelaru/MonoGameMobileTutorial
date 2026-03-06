@@ -291,7 +291,7 @@ public class TitleScene : Scene
         // a different screen:
         GumService.Default.Root.Children.Clear();
 
-        // this game was built for 1280x720 scaled up by 4.
+        // this game was built for Core.BASE_BUFFER_WIDTHxCore.BASE_BUFFER_HEIGHT scaled up by 4.
         GumService.Default.CanvasWidth = Core.BASE_BUFFER_WIDTH / 4f;
         GumService.Default.CanvasHeight = Core.BASE_BUFFER_HEIGHT / 4f;
 
@@ -315,7 +315,7 @@ public class TitleScene : Scene
         var b = Core.GameWindow.ClientBounds;
         float scale = Math.Min(b.Width / (float)Core.BASE_BUFFER_WIDTH, b.Height / (float)Core.BASE_BUFFER_HEIGHT);
         float offsetX = (b.Width - Core.BASE_BUFFER_WIDTH * scale) / 2f;
-        float offsetY = (b.Height - 720 * scale) / 2f;
+        float offsetY = (b.Height - Core.BASE_BUFFER_HEIGHT * scale) / 2f;
         float gumZoom = scale * 4f;
         GumService.Default.Renderer.Camera.Zoom = gumZoom;
         GumService.Default.Renderer.Camera.X = -offsetX / gumZoom;
@@ -330,7 +330,7 @@ public class TitleScene : Scene
         var b = Core.GameWindow.ClientBounds;
         if (b.Width == 0 || b.Height == 0) return Matrix.Identity;
         float scale = Math.Min(b.Width / (float)Core.BASE_BUFFER_WIDTH, b.Height / (float)Core.BASE_BUFFER_HEIGHT);
-        float ox = (b.Width  - 1280 * scale) / 2f;
+        float ox = (b.Width  - Core.BASE_BUFFER_WIDTH * scale) / 2f;
         float oy = (b.Height - Core.BASE_BUFFER_HEIGHT * scale) / 2f;
         return Matrix.CreateScale(scale, scale, 1f) * Matrix.CreateTranslation(ox, oy, 0f);
     }
