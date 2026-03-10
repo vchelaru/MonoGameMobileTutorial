@@ -312,43 +312,25 @@ public class TitleScene : Scene
         _backgroundOffset.X %= _backgroundPattern.Width;
         _backgroundOffset.Y %= _backgroundPattern.Height;
 
-        var b = Core.GameWindow.ClientBounds;
-        float scale = Math.Min(b.Width / (float)Core.BASE_BUFFER_WIDTH, b.Height / (float)Core.BASE_BUFFER_HEIGHT);
-        float offsetX = (b.Width - Core.BASE_BUFFER_WIDTH * scale) / 2f;
-        float offsetY = (b.Height - Core.BASE_BUFFER_HEIGHT * scale) / 2f;
-        float gumZoom = scale * 4f;
-        GumService.Default.Renderer.Camera.Zoom = gumZoom;
-        GumService.Default.Renderer.Camera.X = -offsetX / gumZoom;
-        GumService.Default.Renderer.Camera.Y = -offsetY / gumZoom;
+        Core.UpdateGumCamera();
 
         GumService.Default.Update(gameTime);
 
     }
-
-    private Matrix GetScaleMatrix()
-    {
-        var b = Core.GameWindow.ClientBounds;
-        if (b.Width == 0 || b.Height == 0) return Matrix.Identity;
-        float scale = Math.Min(b.Width / (float)Core.BASE_BUFFER_WIDTH, b.Height / (float)Core.BASE_BUFFER_HEIGHT);
-        float ox = (b.Width  - Core.BASE_BUFFER_WIDTH * scale) / 2f;
-        float oy = (b.Height - Core.BASE_BUFFER_HEIGHT * scale) / 2f;
-        return Matrix.CreateScale(scale, scale, 1f) * Matrix.CreateTranslation(ox, oy, 0f);
-    }
-
 
     public override void Draw(GameTime gameTime)
     {
         Core.GraphicsDevice.Clear(new Color(32, 40, 78, 255));
 
         // Draw the background pattern first using the PointWrap sampler state.
-        Core.SpriteBatch.Begin(samplerState: SamplerState.PointWrap, transformMatrix: GetScaleMatrix());
+        Core.SpriteBatch.Begin(samplerState: SamplerState.PointWrap, transformMatrix: Core.GetScaleMatrix());
         Core.SpriteBatch.Draw(_backgroundPattern, _backgroundDestination, new Rectangle(_backgroundOffset.ToPoint(), _backgroundDestination.Size), Color.White * 0.5f);
         Core.SpriteBatch.End();
 
         if (_titleScreenButtonsPanel.IsVisible)
         {
             // Begin the sprite batch to prepare for rendering.
-            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: GetScaleMatrix());
+            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Core.GetScaleMatrix());
 
             // The color to use for the drop shadow text.
             Color dropShadowColor = Color.Black * 0.5f;

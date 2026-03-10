@@ -85,17 +85,6 @@ public class GameScene : Scene
         base.UnloadContent();
     }
 
-    private Matrix GetScaleMatrix()
-    {
-        var b = Core.GameWindow.ClientBounds;
-        if (b.Width == 0 || b.Height == 0) return Matrix.Identity;
-        float scale = Math.Min(b.Width / (float)Core.BASE_BUFFER_WIDTH, b.Height / (float)Core.BASE_BUFFER_HEIGHT);
-        float ox = (b.Width - Core.BASE_BUFFER_WIDTH * scale) / 2f;
-        float oy = (b.Height - Core.BASE_BUFFER_HEIGHT * scale) / 2f;
-        return Matrix.CreateScale(scale, scale, 1f) * Matrix.CreateTranslation(ox, oy, 0f);
-    }
-
-
     private void InitializeUI()
     {
         // Clear out any previous UI element incase we came here
@@ -186,15 +175,7 @@ public class GameScene : Scene
 
     public override void Update(GameTime gameTime)
     {
-        var b = Core.GameWindow.ClientBounds;
-        float scale = Math.Min(b.Width / (float)Core.BASE_BUFFER_WIDTH, b.Height / (float)Core.BASE_BUFFER_HEIGHT);
-        float offsetX = (b.Width - Core.BASE_BUFFER_WIDTH * scale) / 2f;
-        float offsetY = (b.Height - Core.BASE_BUFFER_HEIGHT * scale) / 2f;
-        float gumZoom = scale * 4f;
-        GumService.Default.Renderer.Camera.Zoom = gumZoom;
-        GumService.Default.Renderer.Camera.X = -offsetX / gumZoom;
-        GumService.Default.Renderer.Camera.Y = -offsetY / gumZoom;
-
+        Core.UpdateGumCamera();
 
         _ui.Update(gameTime);
 
@@ -425,12 +406,12 @@ public class GameScene : Scene
             _grayscaleEffect.Parameters["Saturation"].SetValue(_saturation);
 
             // And begin the sprite batch using the grayscale effect.
-            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: _grayscaleEffect, transformMatrix: GetScaleMatrix());
+            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: _grayscaleEffect, transformMatrix: Core.GetScaleMatrix());
         }
         else
         {
             // Otherwise, just begin the sprite batch as normal.
-            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: GetScaleMatrix());
+            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Core.GetScaleMatrix());
         }
 
         // Draw the tilemap
