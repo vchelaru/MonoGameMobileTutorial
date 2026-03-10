@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGameGum;
 using MonoGameLibrary.Audio;
 using MonoGameLibrary.Input;
 using MonoGameLibrary.Scenes;
@@ -11,6 +12,9 @@ namespace MonoGameLibrary;
 
 public class Core : Game
 {
+    public const int BASE_BUFFER_WIDTH = 1280;
+    public const int BASE_BUFFER_HEIGHT = 720;
+
     internal static Core s_instance;
 
     /// <summary>
@@ -95,7 +99,7 @@ public class Core : Game
         // Set the window title
         Window.Title = title;
 
-        // Set the core's content manager to a reference of hte base Game's
+        // Set the core's content manager to a reference of the base Game's
         // content manager.
         Content = base.Content;
 
@@ -142,12 +146,13 @@ public class Core : Game
         // Update the audio controller.
         Audio.Update();
 
-#if !IOS
-        if (ExitOnEscape && Input.Keyboard.WasKeyJustPressed(Keys.Escape))
+        if (!OperatingSystem.IsIOS())
         {
-            Exit();
+            if (ExitOnEscape && Input.Keyboard.WasKeyJustPressed(Keys.Escape))
+            {
+                Exit();
+            }
         }
-#endif
         
         // if there is a next scene waiting to be switch to, then transition
         // to that scene
@@ -210,5 +215,36 @@ public class Core : Game
         {
             s_activeScene.Initialize();
         }
+    }
+
+    /// <summary>
+    /// Returns a letterbox scale+translation matrix that maps the virtual
+    /// BASE_BUFFER_WIDTH x BASE_BUFFER_HEIGHT canvas to the current window,
+    /// preserving aspect ratio with centred black bars.
+    /// </summary>
+    public static Matrix GetScaleMatrix()
+    {
+        var b = GameWindow.ClientBounds;
+        if (b.Width == 0 || b.Height == 0) return Matrix.Identity;
+        float scale = Math.Min(b.Width / (float)BASE_BUFFER_WIDTH, b.Height / (float)BASE_BUFFER_HEIGHT);
+        float ox = (b.Width  - BASE_BUFFER_WIDTH  * scale) / 2f;
+        float oy = (b.Height - BASE_BUFFER_HEIGHT * scale) / 2f;
+        return Matrix.CreateScale(scale, scale, 1f) * Matrix.CreateTranslation(ox, oy, 0f);
+    }
+
+    /// <summary>
+    /// Updates the GumService camera zoom and offset to match the current
+    /// letterbox scaling.
+    /// </summary>
+    public static void UpdateGumCamera()
+    {
+        var b = GameWindow.ClientBounds;
+        float scale = Math.Min(b.Width / (float)BASE_BUFFER_WIDTH, b.Height / (float)BASE_BUFFER_HEIGHT);
+        float offsetX = (b.Width - BASE_BUFFER_WIDTH * scale) / 2f;
+        float offsetY = (b.Height - BASE_BUFFER_HEIGHT * scale) / 2f;
+        float gumZoom = scale * 4f;
+        GumService.Default.Renderer.Camera.Zoom = gumZoom;
+        GumService.Default.Renderer.Camera.X = -offsetX / gumZoom;
+        GumService.Default.Renderer.Camera.Y = -offsetY / gumZoom;
     }
 }

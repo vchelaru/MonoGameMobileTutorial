@@ -7,6 +7,5 @@
 		<PackageReference Include="MonoGame.Framework.Native">
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="MonoGame.Extended" />
 	</ItemGroup>
 </Project>

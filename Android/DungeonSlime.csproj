@@ -6,6 +6,7 @@
     <ApplicationId>com.companyname.DungeonSlime.Android</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <RootNamespace>DungeonSlime.Android</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Content.Builder.Task" />

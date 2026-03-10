@@ -7,11 +7,11 @@ namespace DungeonSlime.iOS
     [Register("AppDelegate")]
     class Program : UIApplicationDelegate
     {
-        private static Game1 game;
+        private static DungeonSlimeGame game;
 
         internal static void RunGame()
         {
-            game = new Game1();
+            game = new DungeonSlimeGame();
             game.Run();
         }
 
